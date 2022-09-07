@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontendjava-java-deployment
+  name: devops-integration
   labels:
-    app: frontendjava-java
+    app: devops-integration
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontendjava-java
+      app: devops-integration
   template:
     metadata:
       labels:
-        app: frontendjava-java
+        app: devops-integration
     spec:
       containers:
-      - name: frontendjava-javaserver
+      - name: devops-integration-javaserver
         image: madhublue01/devops-integration:latest
         ports:
         - containerPort: 8080              
@@ -23,10 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontendjava-java-service
+  name: devops-integration-service
 spec:
   selector:
-    app: frontendjava-java
+    app: devops-integration
   type: NodePort
   ports:
   - protocol: TCP
