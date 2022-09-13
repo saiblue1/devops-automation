@@ -1,35 +1,40 @@
+
+   
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: devops-integration
+  name: nodeapp-deployment
   labels:
-    app: devops-integration
+    app: nodeapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: devops-integration
+      app: nodeapp
   template:
     metadata:
       labels:
-        app: devops-integration
+        app: nodeapp 
     spec:
       containers:
-      - name: devops-integration-javaserver
-        image: madhublue01/devops-integration:latest
+      - name: nodeserver
+        image: thetips4you/nodeapp:latest
         ports:
-        - containerPort: 8080              
+        - containerPort: 3000
+        
+        
+---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: devops-integration-service
+  name: nodeapp-service
 spec:
   selector:
-    app: devops-integration
-  type: NodePort
+    app: nodeapp 
+  type: LoadBalancer
   ports:
   - protocol: TCP
     port: 5000
-    targetPort: 8080
-    nodePort: 32000
+    targetPort: 3000
+    nodePort: 31110
