@@ -18,7 +18,7 @@ spec:
       - name: frontendjava-javaserver
         image: madhublue01/frontendjava:latest
         ports:
-        - containerPort: 8083
+        - containerPort: 8080
         
         
 ---
@@ -36,5 +36,5 @@ spec:
   ports:
   - protocol: TCP
     port: 5000
-    targetPort: 8083
+    targetPort: 8080
     nodePort: 30082
