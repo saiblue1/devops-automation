@@ -20,7 +20,7 @@ pipeline {
          stage('Push image to Hub'){
              steps{
                  script{
-                     withCredentials([string(credentialsId: 'docker-hublogin', variable: 'dockerhublogin')]) {
+                     withCredentials([string(credentialsId: 'dockerhub_login', variable: 'dockerhublogin')]) {
                      sh 'docker login -u madhublue01 -p ${dockerhublogin}'
 
 }
