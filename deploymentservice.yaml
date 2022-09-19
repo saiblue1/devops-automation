@@ -1,40 +1,36 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment # Kubernetes resource kind we are creating
 metadata:
-  name: frontendjava-java-deployment
-  labels:
-    app: frontendjava-java
+  name: spring-boot-k8s-deployment
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: frontendjava-java
+      app: spring-boot-k8s
+  replicas: 2 # Number of replicas that will be created for this deployment
   template:
     metadata:
       labels:
-        app: frontendjava-java
+        app: spring-boot-k8s
     spec:
       containers:
-      - name: frontendjava-javaserver
-        image: madhublue01/frontendjava:latest
-        ports:
-        - containerPort: 8080
-        
-        
+        - name: spring-boot-k8s
+          image: madhublue01/devops-integration # Image that will be used to containers in the cluster
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080 # The port that the container is running on in the cluster
+
+
 ---
 
-
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontendjava-java-service
+apiVersion: v1 # Kubernetes API version
+kind: Service # Kubernetes resource kind we are creating
+metadata: # Metadata of the resource kind we are creating
+  name: springboot-k8ssvc
 spec:
   selector:
-    app: frontendjava-java
-  type: NodePort
+    app: spring-boot-k8s
   ports:
-  - protocol: TCP
-    port: 5000
-    targetPort: 8080
-    nodePort: 30082
+    - protocol: "TCP"
+      port: 8080 # The port that the service is running on in the cluster
+      targetPort: 8080 # The port exposed by the service
+  type: NodePort # type of the service.
