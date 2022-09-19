@@ -1,40 +1,49 @@
 pipeline {
-    agent any
-    environment {
-        PATH = "/opt/apache-maven-3.8.6/bin:$PATH"
+
+  environment {
+    dockerimagename = "madhublue01/nodeapp"
+    dockerImage = ""
+  }
+
+  agent any
+
+  stages {
+
+    stage('Checkout Source') {
+      steps {
+        git 'https://github.com/shazforiot/nodeapp_test.git'
+      }
     }
-    stages{
-        stage('Build Maven'){
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/saiblue1/devops-automation']]])
-                sh 'mvn clean install'
-            }
+
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
         }
-        stage('Build docker image'){
-            steps{
-                script{
-                    sh 'docker build -t madhublue01/frontendapplication .'
-                }
-            }
-         }
-         stage('Push image to Hub'){
-             steps{
-                 script{
-                     withCredentials([string(credentialsId: 'dockerhub_login', variable: 'dockerhublogin')]) {
-                     sh 'docker login -u madhublue01 -p ${dockerhublogin}'
-
-}
-                     sh 'docker push madhublue01/frontendapplication'
-
-                 }
-             }
-         }
-         stage('Deploying App to Kubernetes'){
-             steps{
-                 script{
-                     kubernetesDeploy (configs: 'deploymentservice.yaml', kubeconfigId: 'k8config')
-                 }
-             }
-         }
+      }
     }
+
+    stage('Pushing Image') {
+      environment {
+               registryCredential = 'dockerhublogin'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
+        }
+      }
+    }
+
+    stage('Deploying App to Kubernetes') {
+      steps {
+        script {
+          kubernetesDeploy (configs: 'deploymentservice.yml',kubeconfigId: 'Kubeadm')
+        }
+      }
+    }
+
+  }
+
 }
